@@ -1,9 +1,12 @@
 package sk.kosickaakademia.spivak.server;
 
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -23,5 +26,25 @@ public class Controller {
     @RequestMapping("/time")
     public String getTime(){
         return  new Date().toString();
+    }
+
+    @RequestMapping(path = "/add")
+    public ResponseEntity<String> addTwoNumbers(@RequestBody String input){
+        try {
+            JSONObject object = (JSONObject) new JSONParser().parse(input);
+            int a = Integer.parseInt((String.valueOf(object.get("a"))));
+            int b = Integer.parseInt((String.valueOf(object.get("b"))));
+            int result = a+b;
+            JSONObject res = new JSONObject();
+            res.put("result",result);
+            return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(res.toJSONString());
+        } catch (ParseException e){
+            e.printStackTrace();
+        } catch (NumberFormatException e){
+            JSONObject obj = new JSONObject();
+            obj.put("error","Incorrect body of the request");
+            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(obj.toJSONString());
+        }
+        return null;
     }
 }
