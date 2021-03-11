@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class JokeController {
         JSONObject object = new JSONObject();
         int status;
         if(id<1 || id>list.size()){
-            object.put("error","Invalid id");
+            object.put("error","Not joke:)");
             status = 404;
         }else{
             object.put("joke",list.get(id-1));
@@ -71,6 +72,17 @@ public class JokeController {
             status = 200;
         }
         return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(object.toJSONString());
+    }
+
+    @GetMapping("/addjoke")
+    public List<String> addJoke(@RequestBody String input){
+        try {
+            list.add(input);
+            return list;
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
