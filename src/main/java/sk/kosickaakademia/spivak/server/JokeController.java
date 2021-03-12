@@ -6,10 +6,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +80,21 @@ public class JokeController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @PostMapping("/joke/new")
+    public ResponseEntity<String> newJoke(@RequestBody String data){
+        try {
+            JSONObject object = (JSONObject) new JSONParser().parse(data);
+            String newJoke = (String)object.get("joke");
+            if(newJoke==null)
+                return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("{}");
+            list.add(newJoke);
+            return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body("{}");
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("{}");
     }
 
 }
